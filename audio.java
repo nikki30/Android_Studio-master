@@ -10,9 +10,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.media.MediaPlayer;
 import android.widget.MediaController;
+import android.widget.SeekBar;
+import android.util.Log;
+import android.widget.SeekBar.OnSeekBarChangeListener;
+import android.media.AudioManager;
+import android.content.Context;
 
 public class MainActivity extends AppCompatActivity {
     MediaPlayer mpPlayer;
+    AudioManager audioManager;
     public void play(View view)
     {
         mpPlayer.start();
@@ -25,6 +31,29 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         mpPlayer = MediaPlayer.create(this, R.raw.laugh);
+        audioManager = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int curVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        SeekBar volumeControl = (SeekBar) findViewById(R.id.seekBar);
+        volumeControl.setMax(maxVolume);
+        volumeControl.setProgress(curVolume);
+        volumeControl.setOnSeekBarChangeListener(new OnSeekBarChangeListener() {
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.i("Seekbar value",Integer.toString(progress));
+                audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+            }
+        });
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
